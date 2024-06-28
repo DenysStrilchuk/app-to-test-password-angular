@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import {CommonModule} from "@angular/common";
-import {FormsModule} from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 
 @Component({
   selector: 'app-password-strength',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './password-strength.component.html',
-  styleUrl: './password-strength.component.css'
+  styleUrls: ['./password-strength.component.css']
 })
 export class PasswordStrengthComponent {
   password: string = '';
@@ -19,9 +19,9 @@ export class PasswordStrengthComponent {
     } else if (this.password.length < 8) {
       this.strength = 1;
     } else {
-      let hasLetters = /[a-zA-Z]/.test(this.password);
-      let hasNumbers = /[0-9]/.test(this.password);
-      let hasSymbols = /[!@#$%^&*(),.?":{}|<>]/.test(this.password);
+      const hasLetters = /[a-zA-Z]/.test(this.password);
+      const hasNumbers = /[0-9]/.test(this.password);
+      const hasSymbols = /[!@#$%^&*(),.?":{}|<>]/.test(this.password);
 
       if (hasLetters && hasNumbers && hasSymbols) {
         this.strength = 3;
@@ -31,21 +31,20 @@ export class PasswordStrengthComponent {
         this.strength = 1;
       }
     }
-    console.log(`Password: ${this.password}, Strength: ${this.strength}`);
   }
 
   getStrengthClass(section: number): string {
-    let strengthClass = '';
-    if (this.strength === 0) {
-      strengthClass = 'grey';
+    if (this.password.length === 0) {
+      return 'grey';
+    } else if (this.password.length < 8) {
+      return 'red';
     } else if (this.strength === 1) {
-      strengthClass = section === 1 ? 'red' : 'grey';
+      return section === 1 ? 'red' : 'grey';
     } else if (this.strength === 2) {
-      strengthClass = section <= 2 ? 'yellow' : 'grey';
+      return section <= 2 ? 'yellow' : 'grey';
     } else if (this.strength === 3) {
-      strengthClass = 'green';
+      return 'green';
     }
-    console.log(`Section ${section} class: ${strengthClass}`);
-    return strengthClass;
+    return 'grey';
   }
 }
