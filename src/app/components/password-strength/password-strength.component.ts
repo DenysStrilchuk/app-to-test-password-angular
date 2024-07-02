@@ -1,50 +1,33 @@
 import { Component } from '@angular/core';
-import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { PasswordStrengthService } from '../../services/password-strength.service';
+import { PasswordInputComponent } from './password-input.component';
+import { PasswordStrengthDisplayComponent } from './password-strength-display.component';
 
 @Component({
   selector: 'app-password-strength',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, PasswordInputComponent, PasswordStrengthDisplayComponent],
   templateUrl: './password-strength.component.html',
   styleUrls: ['./password-strength.component.css']
 })
 export class PasswordStrengthComponent {
-  password: string = '';
-  strength: number = 0;
+  form: FormGroup;
 
-  checkPasswordStrength() {
-    if (this.password.length === 0) {
-      this.strength = 0;
-    } else if (this.password.length < 8) {
-      this.strength = 1;
-    } else {
-      const hasLetters = /[a-zA-Z]/.test(this.password);
-      const hasNumbers = /[0-9]/.test(this.password);
-      const hasSymbols = /[!@#$%^&*(),.?":{}|<>]/.test(this.password);
+  constructor(private fb: FormBuilder, private passwordStrengthService: PasswordStrengthService) {
+    this.form = this.fb.group({
+      password: ['']
+    });
 
-      if (hasLetters && hasNumbers && hasSymbols) {
-        this.strength = 3;
-      } else if ((hasLetters && hasNumbers) || (hasLetters && hasSymbols) || (hasNumbers && hasSymbols)) {
-        this.strength = 2;
-      } else {
-        this.strength = 1;
-      }
-    }
+    this.form.get('password')?.valueChanges.subscribe(value => {
+      this.checkPasswordStrength(value);
+    });
   }
 
-  getStrengthClass(section: number): string {
-    if (this.password.length === 0) {
-      return 'grey';
-    } else if (this.password.length < 8) {
-      return 'red';
-    } else if (this.strength === 1) {
-      return section === 1 ? 'red' : 'grey';
-    } else if (this.strength === 2) {
-      return section <= 2 ? 'yellow' : 'grey';
-    } else if (this.strength === 3) {
-      return 'green';
-    }
-    return 'grey';
+  checkPasswordStrength(password: string) {
+    const strength = this.passwordStrengthService.calculateStrength(password);
+    this.form.get('password')?.setValue(password, { emitEvent: false });
+    this.form.get('strength')?.setValue(strength, { emitEvent: false });
   }
 }
