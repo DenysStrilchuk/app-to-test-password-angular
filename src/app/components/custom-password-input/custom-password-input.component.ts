@@ -19,18 +19,18 @@ import { CommonModule } from '@angular/common';
 export class CustomPasswordInputComponent implements ControlValueAccessor {
   password: string = '';
 
-  private onChange: any = () => {};
+  private onChange: (value: any) => void = () => {};
 
   writeValue(value: string | null): void {
     this.password = value || '';
     this.onChange(this.password);
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: any) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {}
+  registerOnTouched(fn: () => void): void {}
 
   setDisabledState?(isDisabled: boolean): void {}
 
