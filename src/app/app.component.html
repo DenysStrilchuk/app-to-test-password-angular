@@ -1,1 +1,4 @@
-<app-password-strength></app-password-strength>
+<form [formGroup]="form">
+  <app-custom-password-input formControlName="password"></app-custom-password-input>
+  <app-password-strength [password]="passwordControl.value || ''"></app-password-strength>
+</form>

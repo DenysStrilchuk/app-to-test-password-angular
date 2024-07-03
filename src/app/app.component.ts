@@ -1,14 +1,27 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import {PasswordStrengthComponent} from "./components/password-strength/password-strength.component";
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { CustomPasswordInputComponent } from './components/custom-password-input/custom-password-input.component';
+import { PasswordStrengthComponent } from './components/password-strength/password-strength.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, PasswordStrengthComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css'],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    CustomPasswordInputComponent,
+    PasswordStrengthComponent
+  ],
+  standalone: true
 })
 export class AppComponent {
-  title = 'app-to-test-password-angular';
+  form = new FormGroup({
+    password: new FormControl<string | null>(null)
+  });
+
+  get passwordControl() {
+    return this.form.get('password')!;
+  }
 }

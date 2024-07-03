@@ -1,33 +1,36 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { PasswordStrengthService } from '../../services/password-strength.service';
-import { PasswordInputComponent } from './password-input.component';
-import { PasswordStrengthDisplayComponent } from './password-strength-display.component';
 
 @Component({
   selector: 'app-password-strength',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, PasswordInputComponent, PasswordStrengthDisplayComponent],
   templateUrl: './password-strength.component.html',
-  styleUrls: ['./password-strength.component.css']
+  styleUrls: ['./password-strength.component.css'],
+  standalone: true,
+  imports: [CommonModule]
 })
-export class PasswordStrengthComponent {
-  form: FormGroup;
+export class PasswordStrengthComponent implements OnChanges {
+  @Input() password: string = '';
+  strength: number = 0;
 
-  constructor(private fb: FormBuilder, private passwordStrengthService: PasswordStrengthService) {
-    this.form = this.fb.group({
-      password: ['']
-    });
+  constructor(private passwordStrengthService: PasswordStrengthService) {}
 
-    this.form.get('password')?.valueChanges.subscribe(value => {
-      this.checkPasswordStrength(value);
-    });
+  ngOnChanges(): void {
+    this.strength = this.passwordStrengthService.checkStrength(this.password);
   }
 
-  checkPasswordStrength(password: string) {
-    const strength = this.passwordStrengthService.calculateStrength(password);
-    this.form.get('password')?.setValue(password, { emitEvent: false });
-    this.form.get('strength')?.setValue(strength, { emitEvent: false });
+  getStrengthClass(section: number): string {
+    if (this.password.length === 0) {
+      return 'grey';
+    } else if (this.password.length < 8) {
+      return 'red';
+    } else if (this.strength === 1) {
+      return section === 1 ? 'red' : 'grey';
+    } else if (this.strength === 2) {
+      return section <= 2 ? 'yellow' : 'grey';
+    } else if (this.strength === 3) {
+      return 'green';
+    }
+    return 'grey';
   }
 }

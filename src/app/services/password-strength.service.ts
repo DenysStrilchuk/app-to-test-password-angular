@@ -1,19 +1,21 @@
 import { Injectable } from '@angular/core';
-import { REGEX } from '../regex';
+import { REGEX_LETTERS, REGEX_NUMBERS, REGEX_SYMBOLS } from '../constants/regex.constants';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class PasswordStrengthService {
-  calculateStrength(password: string): number {
+  private readonly minPasswordLength = 8;
+
+  checkStrength(password: string): number {
     if (password.length === 0) {
       return 0;
-    } else if (password.length < 8) {
+    } else if (password.length < this.minPasswordLength) {
       return 1;
     } else {
-      const hasLetters = REGEX.hasLetters.test(password);
-      const hasNumbers = REGEX.hasNumbers.test(password);
-      const hasSymbols = REGEX.hasSymbols.test(password);
+      const hasLetters = REGEX_LETTERS.test(password);
+      const hasNumbers = REGEX_NUMBERS.test(password);
+      const hasSymbols = REGEX_SYMBOLS.test(password);
 
       if (hasLetters && hasNumbers && hasSymbols) {
         return 3;
